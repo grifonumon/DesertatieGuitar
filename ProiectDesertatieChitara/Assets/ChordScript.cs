@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class ChordScript : MonoBehaviour
 {
+    private float fadeTime = 0.3f;
+    private bool fading = false;
+    private AudioSource audioSource;
+
     // Start is called before the first frame update
     private void Start()
     {
         PopulateAudioForButtons();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void PopulateAudioForButtons()
@@ -24,5 +29,18 @@ public class ChordScript : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (fading && audioSource.volume > 0)
+            audioSource.volume -= 1 * Time.deltaTime / fadeTime;
+    }
+
+    public void NotePressed()
+    {
+        fading = false;
+        audioSource.volume = 1;
+    }
+
+    public void NoteRelesed()
+    {
+        fading = true;
     }
 }
