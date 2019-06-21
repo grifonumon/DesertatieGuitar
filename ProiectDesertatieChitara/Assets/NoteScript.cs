@@ -39,12 +39,13 @@ public class NoteScript : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         //}
         if (pressedDown)
         {
-            transform.position = Camera.main.ScreenToWorldPoint(
-             new Vector3(Input.mousePosition.x, Input.mousePosition.y, _zDistanceToCamera)
-             ) + _offsetToMouse;
             Vector3 point = Input.mousePosition;
             //if (Mathf.Abs(FirstPosition.y - point.y) < 75)
             //    this.gameObject.transform.localPosition = new Vector2(FirstPosition.x, point.y);
+
+            transform.position = Camera.main.ScreenToWorldPoint(
+             new Vector3(point.x, point.y, _zDistanceToCamera)
+             ) + _offsetToMouse;
 
             Debug.Log(point.x + " " + point.y);
             stringSource.pitch = 1 + (0.01f * Mathf.Lerp(0, 75, Mathf.Abs(Mathf.Abs(FirstPosition.y - point.y))));
