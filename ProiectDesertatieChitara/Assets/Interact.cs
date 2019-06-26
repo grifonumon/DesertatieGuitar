@@ -9,14 +9,18 @@ public class Interact : MonoBehaviour
     public Color selectedColor;
     private Image sprite;
 
+    private Vector2 oldPosition;
+    private float speed = 0.5f;
+
     private void Start()
     {
         sprite = GetComponent<Image>();
     }
 
-    private void OnTouchDown()
+    private void OnTouchDown(Vector2 point)
     {
         sprite.color = selectedColor;
+        oldPosition = point;
     }
 
     private void OnTouchUp()
@@ -24,9 +28,12 @@ public class Interact : MonoBehaviour
         sprite.color = defaultColor;
     }
 
-    private void OnTouchStay()
+    private void OnTouchStay( Vector2 point )
     {
         sprite.color = selectedColor;
+
+        transform.localPosition += new Vector3(transform.localPosition.x + (oldPosition.x - point.x)*speed, transform.localPosition.y + (oldPosition.y - point.y) * speed, transform.localPosition.z);
+        oldPosition = point;
     }
 
     private void OnTouchExit()
