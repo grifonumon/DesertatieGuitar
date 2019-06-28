@@ -1,127 +1,133 @@
 ﻿using UnityEngine;
 
-//using System.Collections;
+using System.Collections;
 
-//using NAudio.Midi;
+using NAudio.Midi;
 
-//using System.IO;
+using System.IO;
 
-//using System.Linq;
-
+using System.Linq;
 
 public class MidiReader : MonoBehaviour
 {
+    public MidiFile midi;
 
+    public float ticks;
 
-    //public MidiFile midi;
+    public float offset;
 
+    //  Use this for initialization
 
-    //public float ticks;
+    private void Start()
+    {
+        //Loading midi file "mainSong.bytes" from resources folder
 
-    //public float offset;
+        //Its a midi file, extension has been changed to .bytes manually
 
+        TextAsset asset = Resources.Load("AllNotesInOrder") as TextAsset;
 
-    // Use this for initialization
+        Stream s = new MemoryStream(asset.bytes);
 
-    //void Start()
-    //{
+        //Read the file
 
-    //    //Loading midi file "mainSong.bytes" from resources folder
+        midi = new MidiFile(s, true);
 
-    //    //Its a midi file, extension has been changed to .bytes manually
+        //Ticks needed for timing calculations
 
-    //    TextAsset asset = Resources.Load("mainSong") as TextAsset;
+        ticks = midi.DeltaTicksPerQuarterNote;
 
-    //    Stream s = new MemoryStream(asset.bytes);
+        StartPlayback();
+    }
 
-    //    //Read the file
+    public void StartPlayback()
 
-    //    midi = new MidiFile(s, true);
+    {
+        //9 is the number of the track we are reading notes from
 
-    //    //Ticks needed for timing calculations
+        //you'll have to experiment with that, i cant remember why i chose 9 here
+        for (int i = 1; i < midi.Events.Tracks; i++)
+        {
+            foreach (MidiEvent note in midi.Events[i])
 
-    //    ticks = midi.DeltaTicksPerQuarterNote;
+            {
+                //If its the start of the note event
 
-    //}
+                if (note.CommandCode == MidiCommandCode.NoteOn)
 
+                {
+                    //Cast to note event and process it
 
-    //public void StartPlayback()
+                    NoteOnEvent noe = (NoteOnEvent)note;
 
-    //{
+                    NoteEvent(noe, i);
+                }
+            }
+        }
+    }
 
-    //    //9 is the number of the track we are reading notes from
+    public void NoteEvent(NoteOnEvent noe, int track)
 
-    //    //you'll have to experiment with that, i cant remember why i chose 9 here
+    {
+        //The bpm(tempo) of the track
 
-    //    foreach (MidiEvent note in midi.Events[9])
+        float bpm = 150;
 
-    //    {
+        //Time until the start of the note in seconds
 
-    //        //If its the start of the note event
+        float time = (60 * noe.AbsoluteTime) / (bpm * ticks);
 
-    //        if (note.CommandCode == MidiCommandCode.NoteOn)
+        //The number (key) of the note. Heres a useful chart of number-to-note translation:
 
-    //        {
+        //http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm
 
-    //            //Cast to note event and process it
+        int noteNumber = noe.NoteNumber;
 
-    //            NoteOnEvent noe = (NoteOnEvent)note;
+        //Start coroutine for each note at the start of the playback
 
-    //            NoteEvent(noe);
+        //Really awful way to do stuff, but its simple
 
-    //        }
+        StartCoroutine(CreateAction(time, noteNumber, noe.NoteLength, track));
+    }
 
-    //    }
+    private IEnumerator CreateAction(float t, int noteNumber, float length, int track)
 
-    //}
+    {
+        //Wait for the start of the note
 
+        yield return new WaitForSeconds(t);
 
-    //public void NoteEvent(NoteOnEvent noe)
+        //The note is about to play, do your stuff here
 
-    //{
+        switch (track)
+        {
+            case 1:
+                noteNumber -= 40;
+                break;
 
-    //    //The bpm(tempo) of the track
+            case 2:
+                noteNumber -= 45;
+                break;
 
-    //    float bpm = 150;
+            case 3:
+                noteNumber -= 50;
+                break;
 
+            case 4:
+                noteNumber -= 55;
+                break;
 
+            case 5:
+                noteNumber -= 59;
+                break;
 
-    //    //Time until the start of the note in seconds
+            case 6:
+                noteNumber -= 64;
+                break;
 
-    //    float time = (60 * noe.AbsoluteTime) / (bpm * ticks);
+            default:
+                break;
+        }
 
-
-
-    //    //The number (key) of the note. Heres a useful chart of number-to-note translation:
-
-    //    //http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm
-
-    //    int noteNumber = noe.NoteNumber;
-
-
-    //    //Start coroutine for each note at the start of the playback
-
-    //    //Really awful way to do stuff, but its simple
-
-    //    StartCoroutine(CreateAction(time, noteNumber, noe.NoteLength));
-
-    //}
-
-
-    //IEnumerator CreateAction(float t, int noteNumber, float length)
-
-    //{
-
-    //    //Wait for the start of the note
-
-    //    yield return new WaitForSeconds(t);
-
-    //    //The note is about to play, do your stuff here
-
-    //    Debug.Log("Playing note: " + noteNumber);
-
-    //}
-
-
-
+        Debug.Log("Playing note: " + noteNumber + "Track " + track);
+    }
 }

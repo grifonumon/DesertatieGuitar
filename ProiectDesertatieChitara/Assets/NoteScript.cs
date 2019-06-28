@@ -26,7 +26,7 @@ public class NoteScript : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void SetAudioClip(string ChordName)
     {
-        Clip = Resources.Load<AudioClip>(Paths.NOTE_PATH + ChordName);
+        Clip = Resources.Load<AudioClip>(PathsAndConstants.NOTE_PATH + ChordName);
     }
 
     // Update is called once per frame
