@@ -16,7 +16,7 @@ public class PathsAndConstants : MonoBehaviour
         eColor
     }
 
-    public Color GetStringColor(StringColors color)
+    public static Color GetStringColor(StringColors color)
     {
         Color c = Color.red;
         switch (color)
