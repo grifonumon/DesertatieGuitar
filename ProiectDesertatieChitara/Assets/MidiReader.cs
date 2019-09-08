@@ -16,6 +16,8 @@ public class MidiReader : MonoBehaviour
 
     public float offset;
 
+    public NoteSpowner noteSpowner;
+
     //  Use this for initialization
 
     private void Start()
@@ -128,6 +130,37 @@ public class MidiReader : MonoBehaviour
                 break;
         }
 
-        Debug.Log("Playing note: " + noteNumber + "Track " + track);
+        string noteName = noteNumber.ToString() + track.ToString();
+        switch (track)
+        {
+            case 1:
+                noteSpowner.SpownNote(noteNumber, PathsAndConstants.StringColors.EColor, noteName);
+                break;
+
+            case 2:
+                noteSpowner.SpownNote(noteNumber, PathsAndConstants.StringColors.AColor, noteName);
+                break;
+
+            case 3:
+                noteSpowner.SpownNote(noteNumber, PathsAndConstants.StringColors.DColor, noteName);
+                break;
+
+            case 4:
+                noteSpowner.SpownNote(noteNumber, PathsAndConstants.StringColors.GColor, noteName);
+                break;
+
+            case 5:
+                noteSpowner.SpownNote(noteNumber, PathsAndConstants.StringColors.BColor, noteName);
+                break;
+
+            case 6:
+                noteSpowner.SpownNote(noteNumber, PathsAndConstants.StringColors.eColor, noteName);
+                break;
+
+            default:
+                break;
+        }
+
+        Debug.Log("Playing note: " + noteName);
     }
 }

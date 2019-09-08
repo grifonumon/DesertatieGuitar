@@ -5,16 +5,11 @@ using UnityEngine;
 public class PathsAndConstants : MonoBehaviour
 {
     public static string NOTE_PATH = "Audio/Strings/";
+    public static string PREFAB_PATH = "Prefabs/";
 
-    public enum StringColors
-    {
-        EColor,
-        AColor,
-        DColor,
-        GColor,
-        BColor,
-        eColor
-    }
+    public const int PENALTY_EASY = 1;
+    public const int PENALTY_MEDIUM = 2;
+    public const int PENALTY_HARD = 3;
 
     public static Color GetStringColor(StringColors color)
     {
@@ -47,4 +42,28 @@ public class PathsAndConstants : MonoBehaviour
         }
         return c;
     }
+
+    public enum StringColors
+    {
+        EColor,
+        AColor,
+        DColor,
+        GColor,
+        BColor,
+        eColor
+    }
+
+    public enum GameDificulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
+
+    public static Dictionary<GameDificulty, int> DictDificulty = new Dictionary<GameDificulty, int>()
+                                            {
+                                                {GameDificulty.Easy, PENALTY_EASY},
+                                                {GameDificulty.Medium, PENALTY_MEDIUM},
+                                                {GameDificulty.Hard,PENALTY_HARD}
+                                            };
 }

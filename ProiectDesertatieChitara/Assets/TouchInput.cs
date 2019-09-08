@@ -13,6 +13,7 @@ public class TouchInput : MonoBehaviour
 
     private Camera camera;
     private RaycastHit hit;
+    private bool[] touchActive = new bool[10];
 
     private GraphicRaycaster m_Raycaster;
     private PointerEventData m_PointerEventData;
@@ -23,6 +24,10 @@ public class TouchInput : MonoBehaviour
     private void Start()
     {
         camera = GetComponent<Camera>();
+        for (int i = 0; i < touchActive.Length; i++)
+        {
+            touchActive[i] = false;
+        }
 
         //Fetch the Raycaster from the GameObject (the Canvas)
         m_Raycaster = GetComponent<GraphicRaycaster>();
@@ -91,36 +96,41 @@ public class TouchInput : MonoBehaviour
             touchesOld = new GameObject[touchList.Count];
             touchList.CopyTo(touchesOld);
             touchList.Clear();
-
+            int nr = 0;
             foreach (Touch touch in Input.touches)
             {
-                Ray ray = camera.ScreenPointToRay(touch.position);
-
-                if (Physics.Raycast(ray, out hit, touchInputMask))
+                if (!touchActive[nr])
                 {
-                    GameObject recipient = hit.transform.gameObject;
-                    touchList.Add(recipient);
+                    Ray ray = camera.ScreenPointToRay(touch.position);
 
-                    switch (touch.phase)
+                    if (Physics.Raycast(ray, out hit, touchInputMask))
                     {
-                        case TouchPhase.Began:
-                            recipient.SendMessage(Messages.ON_TOUCH_DOWN, hit.point, SendMessageOptions.DontRequireReceiver);
-                            break;
+                        GameObject recipient = hit.transform.gameObject;
+                        touchList.Add(recipient);
 
-                        case TouchPhase.Stationary:
-                        case TouchPhase.Moved:
-                            recipient.SendMessage(Messages.ON_TOUCH_STAY, hit.point, SendMessageOptions.DontRequireReceiver);
-                            break;
+                        switch (touch.phase)
+                        {
+                            case TouchPhase.Began:
+                                recipient.SendMessage(Messages.ON_TOUCH_DOWN, hit.point, SendMessageOptions.DontRequireReceiver);
+                                touchActive[nr] = true;
+                                break;
 
-                        case TouchPhase.Ended:
-                            recipient.SendMessage(Messages.ON_TOUCH_UP, hit.point, SendMessageOptions.DontRequireReceiver);
-                            break;
+                            case TouchPhase.Stationary:
+                            case TouchPhase.Moved:
+                                recipient.SendMessage(Messages.ON_TOUCH_STAY, hit.point, SendMessageOptions.DontRequireReceiver);
+                                break;
 
-                        case TouchPhase.Canceled:
-                            recipient.SendMessage(Messages.ON_TOUCH_EXIT, hit.point, SendMessageOptions.DontRequireReceiver);
-                            break;
+                            case TouchPhase.Ended:
+                                recipient.SendMessage(Messages.ON_TOUCH_UP, hit.point, SendMessageOptions.DontRequireReceiver);
+                                break;
+
+                            case TouchPhase.Canceled:
+                                recipient.SendMessage(Messages.ON_TOUCH_EXIT, hit.point, SendMessageOptions.DontRequireReceiver);
+                                break;
+                        }
                     }
                 }
+                nr++;
             }
 
             foreach (GameObject g in touchesOld)
