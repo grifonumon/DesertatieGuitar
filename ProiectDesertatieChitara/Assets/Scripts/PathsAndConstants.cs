@@ -53,6 +53,13 @@ public class PathsAndConstants : MonoBehaviour
         eColor
     }
 
+    public enum SongNames
+    {
+        TestAllNotes,
+        Californication,
+        BreakingTheLawIntro
+    }
+
     public enum GameDificulty
     {
         Easy,

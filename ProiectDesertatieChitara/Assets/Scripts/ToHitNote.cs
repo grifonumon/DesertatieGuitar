@@ -7,10 +7,11 @@ using static PathsAndConstants;
 public class ToHitNote : MonoBehaviour
 {
     private int NumberOfStrings = 1;
-    private float speed = 70f;
+    public float Speed = 80f;
+    public float DestroyDistance = 4;
     private Image imgComponent;
     private string noteName;
-    public float destroyDistance = 4;
+
 
     private void Awake()
     {
@@ -32,7 +33,7 @@ public class ToHitNote : MonoBehaviour
 
     private void Move()
     {
-        transform.position = new Vector2(transform.position.x, transform.position.y - speed * Time.deltaTime);
+        transform.position = new Vector2(transform.position.x, transform.position.y - Speed * Time.deltaTime);
         CheckDestroy();
     }
 
@@ -53,7 +54,7 @@ public class ToHitNote : MonoBehaviour
 
     private void CheckDestroy()
     {
-        if (transform.localPosition.y < destroyDistance)
+        if (transform.localPosition.y < DestroyDistance)
         {
             gameObject.SetActive(false);
         }
