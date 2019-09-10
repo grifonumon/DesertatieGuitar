@@ -10,6 +10,11 @@ public class MidiReader : MonoBehaviour
     public float offset;
     public NoteSpowner noteSpowner;
 
+    private void Start()
+    {
+        PlaySelectedMidi();
+    }
+
     public void PlaySelectedMidi(string midiName = "AllNotesInOrder")
     {
         //Loading midi file "mainSong.bytes" from resources folder
